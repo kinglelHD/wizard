@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wizard</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+</head>
+<body>
+
+    <div id="startMenu" class="section active">
+        <h1>Wizard - Block der Wahrheit</h1>
+        <p>ein digitaler Block der Wahrheit</p>
+        <div class="stack">
+            <button id="startBtn">Spielen</button>
+            <button id="quickStartBtn">Direkt Loslegen</button>
+        </div>
+    </div>
+
+    <div id="playerMenu" class="section">
+        <div>
+            <h2>Bitte wähle die Anzahl der Spieler und vergebe Namen:</h2>
+            <p>Deine Auswahl wird automatisch fürs nächste Mal gespeichert</p>
+        </div>
+        <div id="anzahl">
+            <button id="minus">-</button>
+            <p id="anzahlP">3</p>
+            <button id="plus">+</button>
+        </div>
+        <div class="stack" id="playerNameInputs"></div>
+        <button class="resetBtn">Zurücksetzen</button>
+        <button id="weiterBtn">Weiter</button>
+    </div>
+
+    <div id="gameMenu" class="section">
+        <div>
+            <h2>Wenn du möchtest kannst du jetzt noch die Punktevergabe personalisieren:</h2>
+            <p>Gleich geht es los (:</p>
+        </div>
+        <div class="stack">
+            <div>
+                <label for="richtigPkt">Punkte für eine richtige Vorhersage:</label>
+                <br>
+                <input min="0" type="number" id="richtigPkt" value="20">
+            </div>
+            <div>
+                <label for="falschPkt">Minuspunkte für eine falsche Vorhersage:</label>
+                <br>
+                <input min="0" type="number" id="falschPkt" value="0">
+            </div>
+            <div>
+                <label for="richtigProStichPkt">Punkte pro Stich bei einer richtigen Vorhersage:</label>
+                <br>
+                <input min="0" type="number" id="richtigProStichPkt" value="10">
+            </div>
+            <div>
+                <label for="flaschProStichPkt">Minuspunkt pro falschem Stich bei einer falschen Vorhersage:</label>
+                <br>
+                <input min="0" type="number" id="falschProStichPkt" value="10">
+            </div>
+            <div>
+                <label for="proStichPkt">Punkte pro Stich:</label>
+                <br>
+                <input min="0" type="number" id="proStichPkt" value="0">
+            </div>
+        </div>
+        <button class="resetBtn">Zurücksetzen</button>
+        <button id="losBtn">Starten</button>
+    </div>
+
+    <div id="gameDiv" class="section">
+        <div class="stack">
+            <h1 id="currentState">Playing</h1>
+            <p id="stateInfo">Information</p>
+            <input placeholder="0" min="0" type="number" id="sticheInput">
+            <button id="BlockDerWahrheitBtn">Block der Wahrheit</button>
+            <button id="gameWeiterBtn">Weiter</button>
+        </div>
+    </div>
+
+    <div id="backdrop"></div>
+    <table id="BlockDerWahrheit">
+
+    </table>
+</body>
+</html>

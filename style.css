@@ -1,0 +1,205 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline-color: transparent;
+    border: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+:root {
+    --gold: #FDB702;
+    --red: #E50005;
+    --black: black;
+    --white: white;
+    font-size: min(calc(6px + 1vw), 16px);
+}
+
+html, body { height: 100%;}
+html {
+  background: url("assets/background.png") center/cover no-repeat fixed;
+}
+body {
+    display: grid;
+    place-items: center;
+}
+
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.section {
+    display: none;
+    text-align: center;
+    padding: 4rem;
+}
+.section.active {
+    display: block;
+}
+
+#startMenu {
+    color: var(--black);
+    font-size: 1.6rem;
+}
+#startMenu h1 {
+    font-size: 4rem;
+    color: var(--gold);
+    text-shadow: var(--black) .05em .05em 2px;
+}
+#startMenu div {
+    margin-top: 6rem;
+}
+#startMenu button {
+    font-size: 1.6rem;
+    width: fit-content;
+    margin-inline: auto;
+}
+
+button {
+    background-color: var(--red);
+    padding: 1em 2em;
+    color: var(--white);
+}
+button:hover {
+    background-color: color-mix(var(--red), var(--white) 10%);
+    outline: 2px solid var(--black);
+}
+input[type='text'], input[type='number'] {
+    padding: 1em 2em;
+    border-radius: 24px;
+    font-size: 1.2rem;
+    width: 16rem;
+    margin-inline: auto;
+    background-color: var(white);
+    color: var(--black);
+}
+input[type='text']:focus, input[type='number']:focus {
+    outline: 2px solid var(--black);
+}
+
+#playerMenu.active, #gameMenu.active {
+    display: flex;
+}
+#playerMenu, #gameMenu {
+    flex-direction: column;
+    gap: 2rem;
+}
+#playerMenu #weiterBtn, .resetBtn, #losBtn {
+    width: fit-content;
+    margin-inline: auto;
+    font-size: 1.2rem;
+}
+#weiterBtn, #losBtn {
+    margin-top: 8rem;
+}
+#anzahl {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+}
+#anzahl p {
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+#anzahl button {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+#gameMenu label {
+    font-weight: bold;
+    padding: .5em;
+}
+#gameMenu br {
+    margin-bottom: .5rem;
+}
+
+#BlockDerWahrheit {
+    background-color: var(--black);
+    color: var(--black);
+    padding: 1em;
+    border-radius: 8px;
+    position: fixed;
+    bottom: -100%;
+    transition: bottom ease-in-out .5s;
+}
+#BlockDerWahrheit.active {
+    bottom: 20%;
+}
+#backdrop {
+    position: fixed;
+    pointer-events: none;
+    opacity: 0;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--black), transparent 50%);
+}
+#backdrop.active {
+    transition: opacity ease-in-out .5s;
+    opacity: 1;
+}
+#BlockDerWahrheit::after {
+    content: 'https://blockderwahrheit.netlify.app';
+    color: lightgrey;
+    position: absolute;
+    bottom: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: .8rem;
+}
+#BlockDerWahrheit tr {
+    background-color: var(--white);
+}
+#BlockDerWahrheit tr:nth-child(2n) {
+    background-color: lightgrey;
+}
+#BlockDerWahrheit td, #BlockDerWahrheit th {
+    padding: .125em;
+    text-align: center;
+    position: relative;
+}
+#BlockDerWahrheit td:not(#td0)::after {
+    content: '';
+    height: 100%;
+    top: 0;
+    width: 2px;
+    background-color: var(--black);
+    right: 30%;
+    position: absolute;
+}
+#BlockDerWahrheit td:not(#td0) {
+    text-align: left;
+}
+#BlockDerWahrheit td:not(#td0) #p0 {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    text-align: center;
+    width: 70%;
+}
+#BlockDerWahrheit td:not(#td0) #p1 {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    text-align: center;
+    width: 30%;
+}
+
+#BlockDerWahrheit th:not(#th0) {
+    min-width: 8ch;
+}
+
+#stateInfo {
+    font-size: 1.6rem;
+}
+
+#gameDiv button {
+    width: fit-content;
+    margin-inline: auto;
+    font-size: 1.2rem;
+}
