@@ -145,7 +145,10 @@ const backdrop = document.getElementById('backdrop')
 const gameWeiterBtn = document.getElementById('gameWeiterBtn')
 const currentState = document.getElementById('currentState')
 const stateInfo = document.getElementById('stateInfo')
-const sticheInput = document.getElementById('sticheInput') 
+const sticheInput = document.getElementById('sticheInput')
+const anzahlS = document.getElementById('anzahlS')
+const plusSBtn = document.getElementById('plusS')
+const minusSBtn = document.getElementById('minusS')
 
 // RESET BTN
 document.querySelectorAll('.resetBtn').forEach(btn => {
@@ -266,6 +269,17 @@ quickStartBtn.addEventListener('click', () => {
     next()
 })
 
+plusSBtn.addEventListener('click', () => {
+    if (anzahlS.innerText < Runde) {
+        anzahlS.innerText = parseInt(anzahlS.innerText) + 1
+    }
+})
+minusSBtn.addEventListener('click', () => {
+    if (anzahlS.innerText > 0) {
+        anzahlS.innerText = parseInt(anzahlS.innerText) - 1
+    }
+})
+
 BlockDerWahrheitBtn.addEventListener('click', (e) => {
     e.stopImmediatePropagation()
     blockDerWahrheit.show()
@@ -280,7 +294,7 @@ function next() {
     switch (gameState) {
         case 'Austeilen':
             if (gespeicherterIndex !== undefined) {
-                Spieler[gespeicherterIndex].eintragen(sticheInput.value || 0, Runde - 1)
+                Spieler[gespeicherterIndex].eintragen(parseInt(anzahlS.innerText) || 0, Runde - 1)
                 gespeicherterIndex = undefined
             }
             stateInfo.innerHTML = `<b>${Player.getName(AusteilIndex)}</b> muss <b>${Runde}</b> Karte(n) austeilen`
@@ -289,11 +303,11 @@ function next() {
         case 'Vorhersage':
             wiederholungen++
             if (gespeicherterIndex !== undefined) {
-                Spieler[gespeicherterIndex].ansagen(sticheInput.value || 0)
+                Spieler[gespeicherterIndex].ansagen(parseInt(anzahlS.innerText) || 0)
             }
             stateInfo.innerHTML = `<b>${Player.getName(VorhersageIndex)}</b> muss Stiche ansagen`
-            sticheInput.style.display = 'block'
-            sticheInput.value = ''
+            sticheInput.style.display = 'flex'
+            anzahlS.innerText = '0'
             gespeicherterIndex = VorhersageIndex
             VorhersageIndex = nextIndex(VorhersageIndex)
             
@@ -303,7 +317,7 @@ function next() {
             }
             break
         case 'Spielen':
-            Spieler[gespeicherterIndex].ansagen(sticheInput.value || 0)
+            Spieler[gespeicherterIndex].ansagen(parseInt(anzahlS.innerText) || 0)
             gespeicherterIndex = undefined
             stateInfo.innerHTML = `<b>${Player.getName(RauskommenIndex)}</b> kommt raus`
             gameState = 'Stiche eintragen'
@@ -311,11 +325,11 @@ function next() {
         case 'Stiche eintragen':
             wiederholungen++
             if (gespeicherterIndex !== undefined) {
-                Spieler[gespeicherterIndex].eintragen(sticheInput.value || 0)
+                Spieler[gespeicherterIndex].eintragen(parseInt(anzahlS.innerText) || 0)
             }
             stateInfo.innerHTML = `Wie viele Stiche hat <b>${Player.getName(ErgebnisIndex)}</b> bekommen?`
-            sticheInput.style.display = 'block'
-            sticheInput.value = ''
+            sticheInput.style.display = 'flex'
+            anzahlS.innerText = Spieler[ErgebnisIndex].ansage
             gespeicherterIndex = ErgebnisIndex
             ErgebnisIndex = nextIndex(ErgebnisIndex)
             if (wiederholungen === Spieler.length) {
@@ -333,7 +347,7 @@ function next() {
             }
             break
         case 'Ende':
-            Spieler[gespeicherterIndex].eintragen(sticheInput.value || 0)
+            Spieler[gespeicherterIndex].eintragen(parseInt(anzahlS.innerText) || 0)
             gespeicherterIndex = undefined
             stateInfo.innerHTML = `Das Spiel ist zueende`
             blockDerWahrheit.show()

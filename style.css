@@ -95,13 +95,13 @@ input[type='text']:focus, input[type='number']:focus {
 #weiterBtn, #losBtn {
     margin-top: 8rem;
 }
-#anzahl {
+#anzahl, #gameDiv div {
     display: flex;
     justify-content: center;
     gap: 2rem;
     align-items: center;
 }
-#anzahl p {
+#anzahl p, #gameDiv #anzahlS {
     font-size: 1.6rem;
     font-weight: bold;
 }
@@ -202,4 +202,8 @@ input[type='text']:focus, input[type='number']:focus {
     width: fit-content;
     margin-inline: auto;
     font-size: 1.2rem;
+}
+
+#gameDiv div {
+    display: flex;
 }
