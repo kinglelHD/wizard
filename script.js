@@ -34,6 +34,13 @@ class Player {
 class BlockDerWahrheit {
     constructor() {
         this.table = document.getElementById('BlockDerWahrheit')
+
+        this.table.setAttribute('data-url', window.location || 'https://blockderwahrheit.netlify.app')
+
+        this.text_img = document.createElement('img')
+        this.text_img.id = 'text_img'
+        this.text_img.src = 'assets/text.png'
+        this.table.appendChild(this.text_img)
         
         for (let i = 0; i < 21; i++) { // 21: Anzahl der Reihen im Block
             let tr = document.createElement('tr')

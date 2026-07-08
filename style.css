@@ -10,8 +10,8 @@
 :root {
     --gold: #FDB702;
     --red: #E50005;
-    --black: black;
-    --white: white;
+    --black: #080b0b;
+    --white: #fffefc;
     font-size: min(calc(6px + 1vw), 16px);
 }
 
@@ -142,13 +142,19 @@ input[type='text']:focus, input[type='number']:focus {
     opacity: 1;
 }
 #BlockDerWahrheit::after {
-    content: 'https://blockderwahrheit.netlify.app';
-    color: lightgrey;
+    content: attr(data-url);
+    color: grey;
     position: absolute;
     bottom: 1px;
     left: 50%;
     transform: translateX(-50%);
     font-size: .8rem;
+}
+#BlockDerWahrheit #text_img {
+    position: absolute;
+    width: 35%;
+    right: 6%;
+    bottom: 5%;
 }
 #BlockDerWahrheit tr {
     background-color: var(--white);
