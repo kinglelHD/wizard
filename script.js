@@ -364,6 +364,7 @@ class PopupMenu {
 
                 this.ansage_input.oninput = () => {
                     currentPlayer.ansage(runde, this.ansage_input.value)
+                    this.stiche_input.disabled = currentPlayer.getAnsage(runde) == ''
                     //ansage_span.innerText = this.ansage_input.value updating ui is done in player class
                 }
                 this.stiche_input.oninput = () => {
