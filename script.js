@@ -266,6 +266,23 @@ class PopupMenu {
             e.preventDefault()
             this.hide()
         }
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                // Check if the popup is currently active
+                if (this.container.classList.contains('active')) {
+                    // Calculate how much space the keyboard is taking up
+                    const keyboardHeight = window.innerHeight - window.visualViewport.height;
+                    
+                    if (keyboardHeight > 0) {
+                        // Shift the popup up by the keyboard height plus a little padding
+                        this.container.style.bottom = `${keyboardHeight + 20}px`;
+                    } else {
+                        // Reset to default when keyboard is closed
+                        popup.style.bottom = '5%';
+                    }
+                }
+            });
+        }
     }
     show(type, target=undefined) {
         if (this.container.classList.contains('active')) { //reopen if already open
