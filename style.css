@@ -11,48 +11,77 @@
     --gold: #FDB702;
     --red: #E50005;
     --black: #080b0b;
-    --white: #fffefc;
-    font-size: min(calc(6px + 1vw), 16px);
+    --lightgrey:rgb(210, 210, 210);
+    --lightgrey2:rgb(222, 222, 222);
+    --grey:rgb(169, 169, 169);
+    --grey2:rgb(100, 100, 100);
+    --darkgrey:rgb(42, 42, 42);
+    --white: #f4f4f4;
+    font-size: min(calc(4px + .55vw), 16px);
 }
 
-html, body { height: 100%;}
-html {
-  background: url("assets/background.png") center/cover no-repeat fixed;
-}
 body {
-    display: grid;
-    place-items: center;
+    background: url("assets/background.png") center/cover no-repeat fixed;
 }
-
 
 .stack {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    padding: 4rem;
+}
+.h_stack {
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
 }
 
 .section {
+    position: absolute;
+    top: 50%;
+    margin-inline: auto;
+    width: 100%;
+    transform: translateY(-50%);
     display: none;
     text-align: center;
-    padding: 4rem;
-}
-.section.active {
-    display: block;
-}
-
-#startMenu {
     color: var(--black);
     font-size: 1.6rem;
 }
-#startMenu h1 {
+
+@keyframes switch_section {
+    from {
+        transform: translateY(10%) scale(.8);
+        opacity: 0;
+
+    }
+}
+@keyframes switch_section_backwards {
+    from {
+        transform: translateY(-100%) scale(.8);
+        opacity: 0;
+
+    }
+}
+
+.section.active {
+    display: block;
+    animation: switch_section 750ms;
+}
+#mainMenu.active {
+    animation: switch_section_backwards 750ms;
+}
+.section[data-display="grid"].active {
+    display: grid;
+}
+.section h1 {
     font-size: 4rem;
     color: var(--gold);
     text-shadow: var(--black) .05em .05em 2px;
 }
-#startMenu div {
-    margin-top: 6rem;
-}
-#startMenu button {
+.section button {
+    padding: 1em;
     font-size: 1.6rem;
     width: fit-content;
     margin-inline: auto;
@@ -62,10 +91,15 @@ button {
     background-color: var(--red);
     padding: 1em 2em;
     color: var(--white);
+    cursor: pointer;
 }
-button:hover {
+button:not(:disabled):hover {
     background-color: color-mix(var(--red), var(--white) 10%);
     outline: 2px solid var(--black);
+}
+button:disabled {
+    background-color: color-mix(var(--red), var(--black) 50%);
+    cursor: not-allowed;
 }
 input[type='text'], input[type='number'] {
     padding: 1em 2em;
@@ -79,137 +113,316 @@ input[type='text'], input[type='number'] {
 input[type='text']:focus, input[type='number']:focus {
     outline: 2px solid var(--black);
 }
+input:disabled {
+    cursor: not-allowed;
+}
+input:invalid {
+    outline: .25em dotted var(--red);
+}
 
-#playerMenu.active, #gameMenu.active {
-    display: flex;
-}
-#playerMenu, #gameMenu {
-    flex-direction: column;
-    gap: 2rem;
-}
-#playerMenu #weiterBtn, .resetBtn, #losBtn {
+/* ################### SETTINGS ################## */
+
+#settings .stack {
+    background-color: color-mix(in srgb, var(--black) 70%, transparent);
+    outline: .25rem solid var(--lightgrey);
+    backdrop-filter: blur(2px);
+    padding: 4rem 8rem;
+    border-radius: 24px;
+    color: var(--white);
+    gap: 4rem;
     width: fit-content;
     margin-inline: auto;
-    font-size: 1.2rem;
 }
-#weiterBtn, #losBtn {
-    margin-top: 8rem;
+#settings .stack div:not(.h_stack) {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    text-align: start;
+    gap: 1rem;
 }
-#anzahl, #gameDiv div {
-    display: flex;
+@media only screen and (max-width: 600px) {
+    #settings .stack {
+        padding: 2rem 4rem;
+    }
+    #settings .stack div:not(.h_stack) {
+        grid-auto-flow: row;
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
+
+/* ################### GAME ################## */
+
+#game {
+    height: 100%;
+    width: 100%;
+    align-items: center;
     justify-content: center;
-    gap: 2rem;
+}
+
+#backToMainMenuBtn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background-color: transparent;
+    padding: .5em;
+    font-weight: bold;
+    color: var(--black);
+}
+#exportBtn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: transparent;
+    padding: .5em;
+    font-weight: bold;
+    color: var(--black);
+}
+
+#stiche_table {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: auto repeat(6, 1fr);
+    gap: .25rem;
+    padding: 1.6rem;
+    background-color: var(--black);
+    border-radius: 4px;
+    position: relative;
+    max-width: 100ch;
+}
+
+#stiche_table .name, #numbers_col p:first-child {
+    font-size: 1.2rem;
+    height: 4.8rem; /* Kästchenhöhe 1. Zeile */
+    font-weight: bold;
+    /* display flex von "#stiche_table p" */
+    justify-content: center;
     align-items: center;
 }
-#anzahl p, #gameDiv #anzahlS {
-    font-size: 1.6rem;
-    font-weight: bold;
-}
-#anzahl button {
-    font-weight: bold;
+
+#stiche_table p {
     font-size: 1.2rem;
+    padding: .5rem;
+    background-color: var(--white);
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    height: 2.6rem; /* Kästchenhöhe */
+}
+#stiche_table .stiche_col:not(#numbers_col) p:not(.name) {
+    display: grid;
+    grid-template-columns: 65% 20%; /* magic numbers ¯\_(ツ)_/¯ */
+}
+#stiche_table p:not(.name) span {
+    text-align: center;
+}
+.stiche_col:not(#numbers_col) p {
+    min-width: 12ch;
+    cursor: pointer;
+}
+.name {
+    max-width: 24ch;
+}
+#stiche_table .stiche_col:not(#numbers_col) p:nth-child(2n) {
+    background-color: var(--lightgrey);
+}
+#stiche_table p[data-menu-open=true], #stiche_table .stiche_col:not(#numbers_col) p:hover, #stiche_table .stiche_col:not(#numbers_col) p:focus { /* col:focus thats not the numbers_col */
+    outline: .25rem dotted var(--red);
+    border-radius: 4px;
+    background-color: color-mix(in srgb, var(--white), var(--red) 10%);
+}
+#stiche_table p[data-menu-open=true] {
+    outline-style: solid !important;
 }
 
-#gameMenu label {
-    font-weight: bold;
-    padding: .5em;
+#numbers_col p:first-child {
+    visibility: none;
+    background-color: transparent !important;
 }
-#gameMenu br {
-    margin-bottom: .5rem;
+#numbers_col p {
+    /* display flex von "#stiche_table p" */
+    justify-content: center;
+    align-items: center;
+    background-color: var(--darkgrey);
+    color: var(--white);
 }
-
-#BlockDerWahrheit {
-    background-color: var(--black);
+#numbers_col p:nth-child(-n+16) {
+    background-color: var(--grey2);
+}
+#numbers_col p:nth-child(-n+13) {
+    background-color: var(--grey);
     color: var(--black);
-    padding: 1em;
-    border-radius: 8px;
-    position: fixed;
-    bottom: -100%;
-    transition: bottom ease-in-out .5s;
 }
-#BlockDerWahrheit.active {
-    bottom: 20%;
+#numbers_col p:nth-child(-n+11) {
+    background-color: var(--lightgrey2);
+    color: var(--black);
 }
-#backdrop {
-    position: fixed;
-    pointer-events: none;
-    opacity: 0;
-    inset: 0;
-    background-color: color-mix(in srgb, var(--black), transparent 50%);
+
+.stiche_col {
+    background-color: var(--black);
+    display: grid;
+    row-gap: .25rem;
+    height: fit-content;
+    position: relative;
 }
-#backdrop.active {
-    transition: opacity ease-in-out .5s;
-    opacity: 1;
+
+.stiche_col:not(:first-child) p:not(:first-child)::after { /* Strich zwischen Pkt und Ansage */
+    content: '';
+    height: 100%;
+    top: 0;
+    width: .25rem;
+    background-color: var(--black);
+    right: 30%;
+    position: absolute;
 }
-#BlockDerWahrheit::after {
+
+#numbers_col {
+    width: min-content;
+    cursor: default;
+}
+
+/* DECO many magic numbers ¯\_(ツ)_/¯ */
+#stiche_table .stiche_col:nth-child(4)::after {
+    content: '3 Spieler';
+    font-size: 1.2rem;
+    color: var(--white);
+    position: absolute;
+    transform: rotate(-90deg) translateX(35%);
+    bottom: 0;
+    right: -40%;
+}
+#stiche_table .stiche_col:nth-child(5)::after {
+    content: '4 Spieler';
+    font-size: 1.2rem;
+    color: var(--white);
+    position: absolute;
+    transform: rotate(-90deg) translateX(35%);
+    bottom: 0;
+    right: -40%;
+}
+#stiche_table .stiche_col:nth-child(6)::after {
+    content: '5 Spieler';
+    font-size: 1.2rem;
+    color: var(--white);
+    position: absolute;
+    transform: rotate(-90deg) translateX(35%);
+    bottom: 0;
+    right: -40%;
+}
+#stiche_table #text_img {
+    position: absolute;
+    height: 20%;
+    right: 5%;
+    bottom: 2%;
+}
+#stiche_table::after {
     content: attr(data-url);
-    color: grey;
+    color: rgb(69, 69, 69);
     position: absolute;
     bottom: 1px;
     left: 50%;
     transform: translateX(-50%);
     font-size: .8rem;
 }
-#BlockDerWahrheit #text_img {
-    position: absolute;
-    width: 35%;
-    right: 6%;
+
+/* POPUP MENU */
+
+#popup_menu {
+    display: none;
+    opacity: 0;
+    position: fixed;
+    bottom: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: color-mix(in srgb, var(--black) 70%, transparent);
+    outline: .25rem solid var(--lightgrey);
+    backdrop-filter: blur(2px);
+    padding: 4rem 8rem;
+    border-radius: 24px;
+    transition: bottom 250ms ease, opacity 250ms ease, display 250ms ease;
+    transition-behavior: allow-discrete;
+    color: var(--white);
+}
+#popup_menu.active {
+    display: block;
+    opacity: 1;
     bottom: 5%;
 }
-#BlockDerWahrheit tr {
-    background-color: var(--white);
+@starting-style {
+    #popup_menu.active {
+        opacity: 0;
+        bottom: -100%;
+    }
 }
-#BlockDerWahrheit tr:nth-child(2n) {
-    background-color: lightgrey;
-}
-#BlockDerWahrheit td, #BlockDerWahrheit th {
-    padding: .125em;
-    text-align: center;
-    position: relative;
-}
-#BlockDerWahrheit td:not(#td0)::after {
-    content: '';
-    height: 100%;
-    top: 0;
-    width: 2px;
-    background-color: var(--black);
-    right: 30%;
+
+#close_btn {
+    background-color: transparent;
+    padding: .25em;
     position: absolute;
+    top: 2rem;
+    left: 2rem;
+    font-size: 2.4rem;
+    color: var(--white);
+    outline: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
 }
-#BlockDerWahrheit td:not(#td0) {
-    text-align: left;
+#close_btn:focus-visible {
+    outline: .25rem solid var(--white);
+    border-radius: 4px;
+    background-color: color-mix(in srgb, transparent, var(--white) 10%);
+    color: color-mix(in srgb, var(--black), var(--white) 60%);
 }
-#BlockDerWahrheit td:not(#td0) #p0 {
+#close_btn:hover {
+    color: color-mix(in srgb, var(--black), var(--white) 80%);
+}
+
+/* NAME FIELD */
+#player_delete_btn {
+    background-color: transparent;
+    padding: .25em;
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 0;
-    text-align: center;
-    width: 70%;
+    top: 2rem;
+    right: 2rem;
+    font-size: 2.4rem;
+    color: var(--red);
+    outline: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
 }
-#BlockDerWahrheit td:not(#td0) #p1 {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 0;
-    text-align: center;
-    width: 30%;
+#player_delete_btn:focus-visible {
+    outline: .25rem solid var(--red);
+    border-radius: 4px;
+    background-color: color-mix(in srgb, transparent, var(--red) 10%);
+    color: color-mix(in srgb, var(--white), var(--red) 60%);
 }
-
-#BlockDerWahrheit th:not(#th0) {
-    min-width: 8ch;
-}
-
-#stateInfo {
-    font-size: 1.6rem;
+#player_delete_btn:hover {
+    color: color-mix(in srgb, var(--white), var(--red) 80%);
 }
 
-#gameDiv button {
-    width: fit-content;
-    margin-inline: auto;
-    font-size: 1.2rem;
+#name_input_div, #stiche_input_div {
+    display: none;
+}
+#name_input_div.active, #stiche_input_div.active {
+    display: grid;
+    gap: 1rem;
+}
+#popup_menu input {
+    font-size: 2rem;
+    min-width: 100%;
+}
+/* STICHE FIELD */
+/* Chrome, Safari, Edge, Opera */
+#stiche_input_div input::-webkit-outer-spin-button,
+#stiche_input_div input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-#gameDiv div {
-    display: flex;
+/* Firefox */
+#stiche_input_div input[type=number] {
+  -moz-appearance: textfield;
 }
