@@ -277,6 +277,7 @@ class PopupMenu {
                         // Shift the popup up by the keyboard height plus a little padding
                         this.container.style.bottom = `${keyboardHeight + 20}px`;
                     } else {
+                        window.alert('test')
                         // Reset to default when keyboard is closed
                         popup.style.bottom = '5%';
                     }
