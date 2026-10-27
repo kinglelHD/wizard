@@ -193,7 +193,7 @@ input:invalid {
 }
 
 #stiche_table .name, #numbers_col p:first-child {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     height: 4.8rem; /* Kästchenhöhe 1. Zeile */
     font-weight: bold;
     /* display flex von "#stiche_table p" */
@@ -202,27 +202,29 @@ input:invalid {
 }
 
 #stiche_table p {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     padding: .5rem;
     background-color: var(--white);
     position: relative;
     display: flex;
-    justify-content: space-between;
     height: 2.6rem; /* Kästchenhöhe */
 }
 #stiche_table .stiche_col:not(#numbers_col) p:not(.name) {
     display: grid;
-    grid-template-columns: 65% 20%; /* magic numbers ¯\_(ツ)_/¯ */
+    gap: .5rem;
+    grid-template-columns: 70% 30%; /* magic numbers ¯\_(ツ)_/¯ */
 }
 #stiche_table p:not(.name) span {
+    font-size: 1.6rem;
     text-align: center;
+    pointer-events: none;
 }
 .stiche_col:not(#numbers_col) p {
-    min-width: 12ch;
+    min-width: 8ch;
     cursor: pointer;
 }
 .name {
-    max-width: 24ch;
+    max-width: 12ch;
 }
 #stiche_table .stiche_col:not(#numbers_col) p:nth-child(2n) {
     background-color: var(--lightgrey);
