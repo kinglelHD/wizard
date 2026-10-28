@@ -207,17 +207,22 @@ input:invalid {
     background-color: var(--white);
     position: relative;
     display: flex;
+    align-items: center;
     height: 2.6rem; /* Kästchenhöhe */
-}
-#stiche_table .stiche_col:not(#numbers_col) p:not(.name) {
-    display: grid;
-    gap: .5rem;
-    grid-template-columns: 70% 30%; /* magic numbers ¯\_(ツ)_/¯ */
 }
 #stiche_table p:not(.name) span {
     font-size: 1.6rem;
     text-align: center;
     pointer-events: none;
+    position: absolute;
+}
+#stiche_table p:not(.name) :first-child {
+    left: 0;
+    width: 70%;
+}
+#stiche_table p:not(.name) :last-child {
+    right: 0;
+    width: 30%;
 }
 .stiche_col:not(#numbers_col) p {
     min-width: 8ch;
@@ -381,6 +386,11 @@ input:invalid {
     color: color-mix(in srgb, var(--black), var(--white) 80%);
 }
 
+/* EXPORT */
+#export_a {
+    color: var(--gold);
+}
+
 /* NAME FIELD */
 #player_delete_btn {
     background-color: transparent;
@@ -405,10 +415,10 @@ input:invalid {
     color: color-mix(in srgb, var(--white), var(--red) 80%);
 }
 
-#name_input_div, #stiche_input_div {
+#name_input_div, #stiche_input_div, #export_msg {
     display: none;
 }
-#name_input_div.active, #stiche_input_div.active {
+#name_input_div.active, #stiche_input_div.active, #export_msg.active {
     display: grid;
     gap: 1rem;
 }

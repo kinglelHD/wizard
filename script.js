@@ -76,7 +76,7 @@ class Player {
         return this.rounds[round - 1]?.ansage ? this.rounds[round - 1].ansage : ''
     }
     getStiche(round) {
-        return this.rounds[round - 1]?.stiche ? this.rounds[round - 1].ansage : ''
+        return this.rounds[round - 1]?.stiche ? this.rounds[round - 1].stiche : ''
     }
     ansage(round, ansage) {
         if (ansage < 0 || ansage > round || isNaN(ansage)) return
@@ -121,6 +121,7 @@ class Player {
         let points = 0
         for (let r = 0; r < round; r++) {
             const ROUND = this.rounds[r];
+            if (!ROUND) break
             if (ROUND.ansage == ROUND.stiche) {
                 points += SETTINGS.RICHTIGE_ANSAGE_PUNKTE
                 points += SETTINGS.RICHTIGE_VORHERSAGE_PUNKTE_PRO_STICH * ROUND.stiche
@@ -140,7 +141,7 @@ class Player {
 
 class Game {
     constructor() {
-        this.date = new Date()
+        //this.date = new Date() Maybe as metaData for exporting and sharing
 
         this.players = []
         this.currentRoundNum = 0 // aktuelle Runde als Zahl
@@ -214,6 +215,9 @@ class Game {
             })
         }
 
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            this.popup_menu.show('export')
+        })
         
         window.onbeforeunload = () => {
             if (game) { // unload protection when in game
@@ -236,6 +240,7 @@ class PopupMenu {
     constructor(element, game) {
         this.container = element
         this.game = game
+        this.export_button = document.getElementById('exportBtn')
 
         // name_input
         this.name_input_div = this.container.querySelector('#name_input_div')
@@ -249,9 +254,12 @@ class PopupMenu {
         this.stiche_h2 = this.stiche_input_div.querySelector('#stiche_h2')
         this.ansage_input = this.stiche_input_div.querySelector('#ansage_input')
         this.stiche_input = this.stiche_input_div.querySelector('#stiche_input')
+        // export
+        this.export_div = this.container.querySelector('#export_msg')
+        this.export_a = this.export_div.querySelector('#export_a')
 
         window.addEventListener('click', e => {
-            if (!this.game.p_array.includes(e.target) && !this.container.contains(e.target)) { // light dismiss
+            if (!this.game.p_array.includes(e.target) && !this.container.contains(e.target) && !this.export_button.contains(e.target)) { // light dismiss
                 this.hide()
             }
         })
@@ -289,22 +297,29 @@ class PopupMenu {
             this.hide()
             setTimeout(() => {
                 this.show(type, target)
-            }, 200);
+            }, 250);
             return
         }
+
+        if (target == undefined && type !== 'export') {
+            console.error('[PopupMenu] no target')
+            return false
+        }
+
         this.container.classList.add('active')
 
         if (target) {
             target.setAttribute('data-menu-open', true)
         }
 
-        if (target == undefined) {
-            console.error('[PopupMenu] no target')
-            return false
+        let targetIndex
+        let playerIndex
+        let currentPlayer
+        if (target) {
+            targetIndex = target.getAttribute('data-index')
+            playerIndex = targetIndex-1
+            currentPlayer = this.game.players[playerIndex]
         }
-        const targetIndex = target.getAttribute('data-index')
-        const playerIndex = targetIndex-1
-        const currentPlayer = this.game.players[playerIndex]
         switch (type) {
             case 'name':
                 this.name_input_div.classList.add('active')
@@ -353,7 +368,7 @@ class PopupMenu {
                 this.ansage_input.value = currentPlayer.getAnsage(runde)
                 this.stiche_input.value = currentPlayer.getStiche(runde)
                 this.stiche_input.disabled = this.ansage_input.value == '' // disable Stiche if there is no Ansage
-                this.stiche_input.max = currentPlayer.getAnsage(runde) // max amount of stiche == round
+                this.stiche_input.max = runde // max amount of stiche == round
                 this.ansage_input.max = runde // max amount of ansage == round
                 
                 if (currentPlayer.getAnsage(runde)) {
@@ -372,6 +387,10 @@ class PopupMenu {
                     //stiche_span.innerText = this.stiche_input.value updating ui is done in player class
                 }
 
+                break
+            case 'export':
+                this.export_div.classList.add('active')
+                this.export_a.innerText = JSON.stringify(game.players[0].rounds)
                 break
             default:
                 console.warn(`[PopupMenu] unknown Type: "${type}"`)
