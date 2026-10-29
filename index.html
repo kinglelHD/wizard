@@ -20,7 +20,6 @@
                 <button data-nextSection="game" id="weiterspielerBtn" style="display: none;">Weiterspielen</button>
                 <button data-nextSection="game" id="startBtn">Neues Spiel</button>
                 <button data-nextSection="settings" id="settingsBtn">Einstellungen</button>
-                <button>Spiel importieren</button>
             </div>
         </div>
 
@@ -242,7 +241,12 @@
                 </div>
                 <div id="export_msg">
                     <h2>Dieser Link führt zu deinem aktuellem Spielstand:</h2>
+                    <button id="export_share_btn"></button>
                     <a id="export_a" href="">es ist eine Fehler aufgetreten ):</a>
+                </div>
+                <div id="round_div">
+                    <h2 id="round_h2"></h2>
+                    <p id="round_p"></p>
                 </div>
             </form>
             <button id="backToMainMenuBtn" data-nextSection="mainMenu">

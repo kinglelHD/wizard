@@ -141,7 +141,7 @@ class Player {
 
 class Game {
     constructor() {
-        //this.date = new Date() Maybe as metaData for exporting and sharing
+        this.date = new Date() //Maybe as metaData for exporting and sharing
 
         this.players = []
         this.currentRoundNum = 0 // aktuelle Runde als Zahl
@@ -207,11 +207,31 @@ class Game {
             })
             index++
         })
+        let is_first = true // for ignoring the first element
         for (let row = 0; row < 21; row++) {
-            this.table.querySelectorAll(`.stiche_col:not(#numbers_col) p:nth-child(${row + 1})`).forEach(p => {
-                p.setAttribute('tabindex', index)
-                p.setAttribute('data-row', row)
-                index++
+            let is_numbers_col = true
+            this.table.querySelectorAll(`.stiche_col p:nth-child(${row + 1})`).forEach(p => {
+                if (is_first) {
+                    is_first = false
+                    is_numbers_col = false
+                } else {
+                    p.setAttribute('data-row', row)
+                    p.setAttribute('tabindex', index)
+                    index++
+                    if (is_numbers_col) {
+                        is_numbers_col = false
+                        this.p_array.push(p)
+                        p.onclick = () => {
+                            this.popup_menu.show('round', p)
+                        }
+                        p.addEventListener('keydown', e => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                this.popup_menu.show('round', p)
+                            }
+                        })
+                    }
+                }
             })
         }
 
@@ -225,6 +245,13 @@ class Game {
                 return 'Möchtest du das Spiel wirklich verlassen?'
             } else return
         }
+    }
+    getNumberOfPlayers() {
+        let num = 0
+        this.players.forEach(player => {
+            if (player.name) num++
+        })
+        return Math.max(num, 3) // mindestens 3 Spieler*innen
     }
     update() {
         this.players.forEach(player => {
@@ -257,6 +284,11 @@ class PopupMenu {
         // export
         this.export_div = this.container.querySelector('#export_msg')
         this.export_a = this.export_div.querySelector('#export_a')
+        this.export_share_btn = this.export_div.querySelector('#export_share_btn')
+        // round
+        this.round_div = this.container.querySelector('#round_div')
+        this.round_h2 = this.round_div.querySelector('#round_h2')
+        this.round_p = this.round_div.querySelector('#round_p')
 
         window.addEventListener('click', e => {
             if (!this.game.p_array.includes(e.target) && !this.container.contains(e.target) && !this.export_button.contains(e.target)) { // light dismiss
@@ -322,6 +354,7 @@ class PopupMenu {
         }
         switch (type) {
             case 'name':
+                this.container.classList.add('action')
                 this.name_input_div.classList.add('active')
                 this.player_switch_left.disabled = targetIndex == 1
                 this.player_switch_right.disabled = targetIndex == 6
@@ -360,9 +393,10 @@ class PopupMenu {
                 }
                 break;
             case 'stiche':
+                this.container.classList.add('action')
                 const runde = target.getAttribute('data-row')
                 //const punkte_span = target.querySelector('span:first-child') handeld in Player class
-                const ansage_span = target.querySelector('span:last-child')
+                //const ansage_span = target.querySelector('span:last-child')
                 this.stiche_input_div.classList.add('active')
                 this.stiche_h2.innerText = `${currentPlayer.name ? currentPlayer.name : `Spieler*in ${targetIndex}`} Runde ${runde}`
                 this.ansage_input.value = currentPlayer.getAnsage(runde)
@@ -389,8 +423,45 @@ class PopupMenu {
 
                 break
             case 'export':
+                this.container.classList.add('info')
                 this.export_div.classList.add('active')
-                this.export_a.innerText = JSON.stringify(game.players[0].rounds)
+                let exportObjekt = {d: this.game.date}
+                this.game.players.forEach(player => {
+                    if (player.name) {
+                        exportObjekt[`p${player.index}`] = {n: player.name, r:[]}
+                        player.rounds.forEach(round => {
+                            exportObjekt[`p${player.index}`].r.push({a: round.ansage, s: round.stiche})
+                        })
+                    }
+                })
+                const exportLink = window.location.origin + '?' + JSON.stringify(exportObjekt)
+                this.export_a.href = exportLink
+                this.export_a.innerText = exportLink
+                if (navigator.share) {
+                    this.export_share_btn.innerText = 'Teilen';
+                    this.export_share_btn.onclick = () => {
+                        navigator.share({
+                            title: 'Mein Wizard Spiel',
+                            text: 'Guck dir mein Wizard Spiel an:',
+                            url: exportLink
+                        }).catch((error) => {
+                            console.log('Error sharing:', error);
+                        });
+                    };
+                } else {
+                    this.export_share_btn.innerText = 'Kopieren';
+                    this.export_share_btn.onclick = () => {
+                        navigator.clipboard.writeText(exportLink)
+                    };
+                }
+                break
+            case 'round':
+                const round = target.getAttribute('data-row')
+                let rauskommenIndex = (round - 1) % this.game.getNumberOfPlayers()
+                this.container.classList.add('info')
+                this.round_div.classList.add('active')
+                this.round_h2.innerText = `Runde ${round}`
+                this.round_p.innerText = `${this.game.players[rauskommenIndex].name ? this.game.players[rauskommenIndex].name : 'Spieler*in ' + (rauskommenIndex + 1)} kommt diese Runde raus!${round == 1 ? '' : ` (Wenn in Runde 1 ${this.game.players[0].name ? this.game.players[0].name : 'Spieler*in 1'} angefangen hat)`}`
                 break
             default:
                 console.warn(`[PopupMenu] unknown Type: "${type}"`)
@@ -399,6 +470,8 @@ class PopupMenu {
     }
     hide() {
         this.container.classList.remove('active')
+        this.container.classList.remove('action')
+        this.container.classList.remove('info')
         this.container.querySelectorAll('.active').forEach(el => {
             el.classList.remove('active')
         })
@@ -406,4 +479,28 @@ class PopupMenu {
             el.setAttribute('data-menu-open', false)
         })
     }
+}
+
+// load game from search params
+if (window.location.search) {
+    const GAME_DATA = JSON.parse(decodeURIComponent(window.location.search.replace('?', '')))
+    window.history.replaceState({}, '', window.origin); // shows the origin adress in the adressbar
+    newGame()
+    game.date = GAME_DATA.d
+    game.players.forEach(player => {
+        if (GAME_DATA[`p${player.index}`]) {
+            const PLAYER = GAME_DATA[`p${player.index}`]
+            player.name = PLAYER.n
+            let rIndex = 0
+            PLAYER.r.forEach(r => {
+                player.rounds[rIndex] = {ansage: r.a, stiche: r.s}
+                rIndex++
+            })
+        }
+    })
+    game.update()
+    document.querySelectorAll('.section.active').forEach(s => {
+        s.classList.remove('active')
+    })
+    document.getElementById('game').classList.add('active')
 }

@@ -231,16 +231,21 @@ input:invalid {
 .name {
     max-width: 12ch;
 }
-#stiche_table .stiche_col:not(#numbers_col) p:nth-child(2n) {
+.stiche_col:not(#numbers_col) p:nth-child(2n) {
     background-color: var(--lightgrey);
 }
-#stiche_table p[data-menu-open=true], #stiche_table .stiche_col:not(#numbers_col) p:hover, #stiche_table .stiche_col:not(#numbers_col) p:focus { /* col:focus thats not the numbers_col */
+#stiche_table .stiche_col p[data-menu-open=true], #stiche_table .stiche_col:not(#numbers_col) p:hover, #stiche_table .stiche_col:not(#numbers_col) p:focus { /* col:focus thats not the numbers_col */
     outline: .25rem dotted var(--red);
     border-radius: 4px;
     background-color: color-mix(in srgb, var(--white), var(--red) 10%);
 }
 #stiche_table p[data-menu-open=true] {
     outline-style: solid !important;
+}
+#stiche_table #numbers_col p[data-menu-open=true], #stiche_table #numbers_col p:not(:first-child):hover, #stiche_table #numbers_col p:not(:first-child):focus {
+    outline: .25rem dotted var(--gold);
+    border-radius: 4px;
+    background-color: color-mix(in srgb, var(--local-bg), var(--gold) 10%);
 }
 
 #numbers_col p:first-child {
@@ -252,17 +257,21 @@ input:invalid {
     justify-content: center;
     align-items: center;
     background-color: var(--darkgrey);
+    --local-bg: var(--darkgrey);
     color: var(--white);
 }
 #numbers_col p:nth-child(-n+16) {
     background-color: var(--grey2);
+    --local-bg: var(--grey2);
 }
 #numbers_col p:nth-child(-n+13) {
     background-color: var(--grey);
+    --local-bg: var(--grey);
     color: var(--black);
 }
 #numbers_col p:nth-child(-n+11) {
     background-color: var(--lightgrey2);
+    --local-bg: var(--lightgrey2);
     color: var(--black);
 }
 
@@ -351,6 +360,12 @@ input:invalid {
     transition-behavior: allow-discrete;
     color: var(--white);
 }
+#popup_menu.action {
+    outline-color: var(--red);
+}
+#popup_menu.info {
+    outline-color: var(--gold);
+}
 #popup_menu.active {
     display: block;
     opacity: 1;
@@ -415,10 +430,10 @@ input:invalid {
     color: color-mix(in srgb, var(--white), var(--red) 80%);
 }
 
-#name_input_div, #stiche_input_div, #export_msg {
+#name_input_div, #stiche_input_div, #export_msg, #round_div {
     display: none;
 }
-#name_input_div.active, #stiche_input_div.active, #export_msg.active {
+#name_input_div.active, #stiche_input_div.active, #export_msg.active, #round_div.active {
     display: grid;
     gap: 1rem;
 }
