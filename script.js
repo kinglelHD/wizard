@@ -79,7 +79,7 @@ class Player {
         return this.rounds[round - 1]?.stiche ? this.rounds[round - 1].stiche : ''
     }
     ansage(round, ansage) {
-        if (ansage < 0 || ansage > round || isNaN(ansage)) return
+        if (ansage < 0 || ansage > Number(round) || isNaN(ansage)) return
 
         this.rounds[round-1] ? this.rounds[round-1].ansage = ansage : this.rounds[round-1] = {ansage: ansage, stiche: undefined}
         
@@ -87,7 +87,7 @@ class Player {
     }
     stiche(round, stiche) {
         if (!this.rounds[round-1]) return
-        if (stiche < 0 || stiche > round || isNaN(stiche)) return
+        if (stiche < 0 || stiche > Number(round) || isNaN(stiche)) return
 
         this.rounds[round-1].stiche = stiche
 
