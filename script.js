@@ -324,11 +324,14 @@ class PopupMenu {
             });
         }
     }
-    show(type, target=undefined) {
+    show(type, target=undefined, focusInput=true) {
         if (this.container.classList.contains('active')) { //reopen if already open
+            const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
+            const keyboardIsOpen = window.visualViewport &&
+                window.innerHeight - window.visualViewport.height > 100
             this.hide()
             setTimeout(() => {
-                this.show(type, target)
+                this.show(type, target, !isTouchDevice || keyboardIsOpen)
             }, 250);
             return
         }
@@ -360,7 +363,7 @@ class PopupMenu {
                 this.player_switch_right.disabled = targetIndex == 6
                 this.name_h2.innerText = `Spieler*in ${targetIndex}`
                 this.name_input.value = currentPlayer.name
-                this.name_input.focus({ preventScroll: true })
+                if (focusInput) this.name_input.focus({ preventScroll: true })
                 this.name_input.oninput = () => {
                     currentPlayer.name = this.name_input.value
                     target.innerText = this.name_input.value
@@ -405,10 +408,12 @@ class PopupMenu {
                 this.stiche_input.max = runde // max amount of stiche == round
                 this.ansage_input.max = runde // max amount of ansage == round
                 
-                if (currentPlayer.getAnsage(runde)) {
-                    this.stiche_input.focus({ preventScroll: true })
-                } else {
-                    this.ansage_input.focus({ preventScroll: true })
+                if (focusInput) {
+                    if (currentPlayer.getAnsage(runde)) {
+                        this.stiche_input.focus({ preventScroll: true })
+                    } else {
+                        this.ansage_input.focus({ preventScroll: true })
+                    }
                 }
 
                 this.ansage_input.oninput = () => {
