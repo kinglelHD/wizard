@@ -307,21 +307,23 @@ class PopupMenu {
             this.hide()
         }
         if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', () => {
-                // Check if the popup is currently active
-                if (this.container.classList.contains('active')) {
-                    // Calculate how much space the keyboard is taking up
-                    const keyboardHeight = window.innerHeight - window.visualViewport.height;
-                    
-                    if (keyboardHeight > 0) {
-                        // Shift the popup up by the keyboard height plus a little padding
-                        this.container.style.bottom = `${keyboardHeight + 20}px`;
-                    } else {
-                        // Reset to default when keyboard is closed
-                        this.container.style.bottom = '5%';
-                    }
+            const updateViewport = () => {
+                if (!this.container.classList.contains('active')) return
+
+                const viewport = window.visualViewport
+                const keyboardHeight = window.innerHeight - viewport.height
+
+                if (keyboardHeight > 0) {
+                    const viewportBottom = viewport.offsetTop + viewport.height
+                    this.container.style.bottom = `${window.innerHeight - viewportBottom + 20}px`
+                    this.container.style.maxHeight = `${Math.max(0, viewport.height - 40)}px`
+                } else {
+                    this.container.style.bottom = '5%'
+                    this.container.style.maxHeight = ''
                 }
-            });
+            }
+            window.visualViewport.addEventListener('resize', updateViewport)
+            window.visualViewport.addEventListener('scroll', updateViewport)
         }
     }
     show(type, target=undefined, focusInput=true) {
