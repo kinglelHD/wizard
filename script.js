@@ -267,6 +267,7 @@ class PopupMenu {
     constructor(element, game) {
         this.container = element
         this.game = game
+        this.pageScrollPosition = { x: 0, y: 0 }
         this.export_button = document.getElementById('exportBtn')
 
         // name_input
@@ -343,6 +344,7 @@ class PopupMenu {
             return false
         }
 
+        this.pageScrollPosition = { x: window.scrollX, y: window.scrollY }
         this.container.classList.add('active')
 
         if (target) {
@@ -476,15 +478,19 @@ class PopupMenu {
         }
     }
     hide() {
+        const wasActive = this.container.classList.contains('active')
         this.container.classList.remove('active')
         this.container.classList.remove('action')
         this.container.classList.remove('info')
+        this.container.style.removeProperty('bottom')
+        this.container.style.removeProperty('max-height')
         this.container.querySelectorAll('.active').forEach(el => {
             el.classList.remove('active')
         })
         this.game.table.querySelectorAll('[data-menu-open="true"]').forEach(el => {
             el.setAttribute('data-menu-open', false)
         })
+        if (wasActive) window.scrollTo(this.pageScrollPosition.x, this.pageScrollPosition.y)
     }
 }
 
