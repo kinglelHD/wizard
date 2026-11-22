@@ -267,6 +267,7 @@ class PopupMenu {
     constructor(element, game) {
         this.container = element
         this.game = game
+        this.pageScrollPosition = { x: 0, y: 0 }
         this.export_button = document.getElementById('exportBtn')
 
         // name_input
@@ -307,21 +308,23 @@ class PopupMenu {
             this.hide()
         }
         if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', () => {
-                // Check if the popup is currently active
-                if (this.container.classList.contains('active')) {
-                    // Calculate how much space the keyboard is taking up
-                    const keyboardHeight = window.innerHeight - window.visualViewport.height;
-                    
-                    if (keyboardHeight > 0) {
-                        // Shift the popup up by the keyboard height plus a little padding
-                        this.container.style.bottom = `${keyboardHeight + 20}px`;
-                    } else {
-                        // Reset to default when keyboard is closed
-                        this.container.style.bottom = '5%';
-                    }
+            const updateViewport = () => {
+                if (!this.container.classList.contains('active')) return
+
+                const viewport = window.visualViewport
+                const keyboardHeight = window.innerHeight - viewport.height
+
+                if (keyboardHeight > 0) {
+                    const viewportBottom = viewport.offsetTop + viewport.height
+                    this.container.style.bottom = `${window.innerHeight - viewportBottom + 20}px`
+                    this.container.style.maxHeight = `${Math.max(0, viewport.height - 40)}px`
+                } else {
+                    this.container.style.bottom = '5%'
+                    this.container.style.maxHeight = ''
                 }
-            });
+            }
+            window.visualViewport.addEventListener('resize', updateViewport)
+            window.visualViewport.addEventListener('scroll', updateViewport)
         }
     }
     show(type, target=undefined, focusInput=true) {
@@ -341,6 +344,7 @@ class PopupMenu {
             return false
         }
 
+        this.pageScrollPosition = { x: window.scrollX, y: window.scrollY }
         this.container.classList.add('active')
 
         if (target) {
@@ -474,15 +478,19 @@ class PopupMenu {
         }
     }
     hide() {
+        const wasActive = this.container.classList.contains('active')
         this.container.classList.remove('active')
         this.container.classList.remove('action')
         this.container.classList.remove('info')
+        this.container.style.removeProperty('bottom')
+        this.container.style.removeProperty('max-height')
         this.container.querySelectorAll('.active').forEach(el => {
             el.classList.remove('active')
         })
         this.game.table.querySelectorAll('[data-menu-open="true"]').forEach(el => {
             el.setAttribute('data-menu-open', false)
         })
+        if (wasActive) window.scrollTo(this.pageScrollPosition.x, this.pageScrollPosition.y)
     }
 }
 

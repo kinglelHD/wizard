@@ -20,8 +20,15 @@
     font-size: min(calc(4px + .55vw), 16px);
 }
 
-body {
+html {
+    min-height: 100%;
     background: url("assets/background.png") center/cover no-repeat fixed;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: transparent;
 }
 
 .stack {
@@ -356,6 +363,9 @@ input:invalid {
     backdrop-filter: blur(2px);
     padding: 4rem 8rem;
     border-radius: 24px;
+    max-height: calc(100vh - 2rem);
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
     transition: bottom 250ms ease, opacity 250ms ease, display 250ms ease;
     transition-behavior: allow-discrete;
     color: var(--white);
