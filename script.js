@@ -68,12 +68,13 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 })
 window.addEventListener('beforeunload', () => {
     localStorage.setItem('settings', JSON.stringify(SETTINGS))
-    localStorage.setItem('lastgame', JSON.stringify(saveGameState(game)))
+    const SAVE = saveGameState(game)
+    if (SAVE) localStorage.setItem('lastgame', JSON.stringify(SAVE))
 })
 //#################
 
 function saveGameState(game) {
-    if (!game) return { d: new Date() }
+    if (!game) return false
     let save = {d: game.date}
     game.players.forEach(player => {
         if (player.name) {
