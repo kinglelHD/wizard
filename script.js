@@ -73,7 +73,7 @@ window.addEventListener('beforeunload', () => {
 //#################
 
 function saveGameState(game) {
-    if (!game) return
+    if (!game) return { d: new Date() }
     let save = {d: game.date}
     game.players.forEach(player => {
         if (player.name) {
