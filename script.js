@@ -9,9 +9,17 @@ function changeActiveSection(e) {
     if (game) {
         document.getElementById('weiterspielerBtn').style.display = 'block'
         if (nextSection === 'game') game.update()
+    } else if (localStorage.getItem('lastgame')) {
+        if (nextSection === 'game') window.location = window.location.origin + '?' + localStorage.getItem('lastgame')
+        document.getElementById('weiterspielerBtn').style.display = 'block'
     } else {
         document.getElementById('weiterspielerBtn').style.display = 'none'
     }
+}
+if (localStorage.getItem('lastgame')) {
+    document.getElementById('weiterspielerBtn').style.display = 'block'
+} else {
+    document.getElementById('weiterspielerBtn').style.display = 'none'
 }
 
 document.querySelectorAll('[data-nextSection]').forEach(btn => {
@@ -60,8 +68,23 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 })
 window.addEventListener('beforeunload', () => {
     localStorage.setItem('settings', JSON.stringify(SETTINGS))
+    localStorage.setItem('lastgame', JSON.stringify(saveGameState(game)))
 })
 //#################
+
+function saveGameState(game) {
+    if (!game) return
+    let save = {d: game.date}
+    game.players.forEach(player => {
+        if (player.name) {
+            save[`p${player.index}`] = {n: player.name, r:[]}
+            player.rounds.forEach(round => {
+                save[`p${player.index}`].r.push({a: round.ansage, s: round.stiche})
+            })
+        }
+    })
+    return save
+}
 
 class Player {
     constructor(index, game) {
@@ -430,15 +453,7 @@ class PopupMenu {
             case 'export':
                 this.container.classList.add('info')
                 this.export_div.classList.add('active')
-                let exportObjekt = {d: this.game.date}
-                this.game.players.forEach(player => {
-                    if (player.name) {
-                        exportObjekt[`p${player.index}`] = {n: player.name, r:[]}
-                        player.rounds.forEach(round => {
-                            exportObjekt[`p${player.index}`].r.push({a: round.ansage, s: round.stiche})
-                        })
-                    }
-                })
+                let exportObjekt = saveGameState(this.game)
                 const exportLink = window.location.origin + '?' + JSON.stringify(exportObjekt)
                 this.export_a.href = exportLink
                 this.export_a.innerText = exportLink
